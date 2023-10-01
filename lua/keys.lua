@@ -48,6 +48,9 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- Git
 vim.keymap.set("n", "<leader>gg", require('neogit').open, { desc = "Open neogit"})
 
+-- Mason
+vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Open Mason"})
+
 -- document existing key chains
 require('which-key').register({
   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
