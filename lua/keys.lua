@@ -27,12 +27,6 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
 
--- Move between windows
-vim.keymap.set("n", "<C-J>", "<C-W><C-J>", { desc = "Go to window below"})
-vim.keymap.set("n", "<C-K>", "<C-W><C-K>", { desc = "Go to window above"})
-vim.keymap.set("n", "<C-L>", "<C-W><C-L>", { desc = "Go to window on the right"})
-vim.keymap.set("n", "<C-H>", "<C-W><C-H>", { desc = "Go to window on the left"})
-
 -- FloaTerm configuration
 vim.keymap.set('n', "t", ":FloatermToggle myfloat<CR>")
 vim.keymap.set('t', "<Esc>", "<C-\\><C-n>:q<CR>")

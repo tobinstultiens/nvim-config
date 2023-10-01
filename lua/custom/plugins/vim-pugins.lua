@@ -5,8 +5,12 @@
 return {
   "romainl/vim-cool",
   "voldikss/vim-floaterm",
+  "tpope/vim-surround",
   "norcalli/nvim-colorizer.lua",
-  "christoomey/vim-tmux-navigator",
+  {
+    "christoomey/vim-tmux-navigator",
+    lazy = false,
+  },
   {
     'phaazon/hop.nvim',
     branch = 'v2', -- optional but strongly recommended
