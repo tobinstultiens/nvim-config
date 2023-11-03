@@ -26,10 +26,10 @@ require('lazy').setup({
   {
     "NeogitOrg/neogit",
     dependencies = {
-      "nvim-lua/plenary.nvim",       -- required
+      "nvim-lua/plenary.nvim",         -- required
       "nvim-telescope/telescope.nvim", -- optional
-      "sindrets/diffview.nvim",      -- optional
-      "ibhagwan/fzf-lua",            -- optional
+      "sindrets/diffview.nvim",        -- optional
+      "ibhagwan/fzf-lua",              -- optional
     },
     config = true
   },
@@ -73,7 +73,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim', opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -105,7 +105,7 @@ require('lazy').setup({
     },
   },
 
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+  { "catppuccin/nvim",      name = "catppuccin", priority = 1000 },
 
   {
     -- Set lualine as statusline
@@ -131,7 +131,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',  opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -206,7 +206,8 @@ pcall(require('telescope').load_extension, 'fzf')
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'elixir', 'heex' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim',
+    'elixir', 'heex' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -287,6 +288,7 @@ local on_attach = function(_, bufnr)
 
   nmap('<leader>cr', vim.lsp.buf.rename, '[Code] [R]ename')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+  nmap('<leader>cf', vim.lsp.buf.format(), '[C]ode [F]ormat')
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
@@ -327,7 +329,67 @@ local servers = {
   -- pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  ansiblels = {
+    filetypes = {
+      "yaml.ansible",
+      "yaml",
+    }
+  },
+  html = { filetypes = { 'html', 'twig', 'hbs', 'heex', "elixir" } },
+  tailwindcss = {
+    init_options = { elixir = "phoenix-heex", eruby = "erb", heex = "phoenix=heex", svelte = "html" },
+    handlers = {
+      ["tailwindcss/getConfiguration"] = function(_, _, params, _, bufnr, _)
+        vim.lsp.buf_notify(bufnr, "tailwindcss/getConfigurationResponse", { _id = params._id })
+      end,
+    },
+    settings = {
+      includeLanguages = {
+        typescript = "javascript",
+        typescriptreact = "javascript",
+        ["html-eex"] = "html",
+        ["phoenix-heex"] = "html",
+        heex = "html",
+        eelixir = "html",
+        elm = "html",
+        erb = "html",
+        svelte = "html",
+      },
+      tailwindCSS = {
+        lint = {
+          cssConflict = "warning",
+          invalidApply = "error",
+          invalidConfigPath = "error",
+          invalidScreen = "error",
+          invalidTailwindDirective = "error",
+          invalidVariant = "error",
+          recommendedVariantOrder = "warning",
+        },
+        experimental = {
+          classRegex = {
+            [[class= "([^"]*)]],
+            [[class: "([^"]*)]],
+            '~H""".*class="([^"]*)".*"""',
+          },
+        },
+        validate = true,
+      },
+    },
+    filetypes = {
+      "css",
+      "scss",
+      "sass",
+      "html",
+      "heex",
+      "elixir",
+      "eruby",
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "svelte",
+    },
+  },
 
   lua_ls = {
     Lua = {
