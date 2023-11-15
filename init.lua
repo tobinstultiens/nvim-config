@@ -335,6 +335,7 @@ local servers = {
       "yaml",
     }
   },
+  hls = {},
   html = { filetypes = { 'html', 'twig', 'hbs', 'heex', "elixir" } },
   tailwindcss = {
     init_options = { elixir = "phoenix-heex", eruby = "erb", heex = "phoenix=heex", svelte = "html" },
