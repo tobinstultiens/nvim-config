@@ -87,7 +87,8 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>hp', require('gitsigns').preview_hunk, { buffer = bufnr, desc = 'Preview git hunk' })
+        vim.keymap.set('n', '<leader>hp', require('gitsigns').preview_hunk,
+          { buffer = bufnr, desc = 'Preview git hunk' })
 
         -- don't override the built-in and fugitive keymaps
         local gs = package.loaded.gitsigns
@@ -271,7 +272,7 @@ require('nvim-treesitter.configs').setup {
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+local on_attach_lsp = function(_, bufnr)
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -327,7 +328,7 @@ local servers = {
   -- clangd = {},
   -- gopls = {},
   -- pyright = {},
-  -- rust_analyzer = {},
+  rust_analyzer = {},
   -- tsserver = {},
   ansiblels = {
     filetypes = {
@@ -403,6 +404,40 @@ local servers = {
 -- Setup neovim lua configuration
 require('neodev').setup()
 
+-- Setup neovim rust tools.
+require("rust-tools").setup(
+  {
+    tools = {
+      runnables = {
+        use_telescope = true,
+      },
+      inlay_hints = {
+        auto = true,
+        show_parameter_hints = false,
+        parameter_hints_prefix = "",
+        other_hints_prefix = "",
+      },
+    },
+
+    -- all the opts to send to nvim-lspconfig
+    -- these override the defaults set by rust-tools.nvim
+    -- see https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#rust_analyzer
+    -- server = {
+    --   -- on_attach is a callback called when the language server attachs to the buffer
+    --   on_attach = on_attach_lsp,
+    --   settings = {
+    --     -- to enable rust-analyzer settings visit:
+    --     -- https://github.com/rust-analyzer/rust-analyzer/blob/master/docs/user/generated_config.adoc
+    --     ["rust-analyzer"] = {
+    --       -- enable clippy on save
+    --       checkOnSave = {
+    --         command = "clippy",
+    --       },
+    --     },
+    --   },
+    -- },
+  })
+
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
@@ -418,10 +453,13 @@ mason_lspconfig.setup_handlers {
   function(server_name)
     require('lspconfig')[server_name].setup {
       capabilities = capabilities,
-      on_attach = on_attach,
+      on_attach = on_attach_lsp,
       settings = servers[server_name],
       filetypes = (servers[server_name] or {}).filetypes,
     }
+  end,
+  ["rust_analyzer"] = function()
+    require("rust-tools").setup {}
   end
 }
 
