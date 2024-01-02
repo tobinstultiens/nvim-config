@@ -294,6 +294,7 @@ require('nvim-treesitter.configs').setup {
 @end
 
 * Lsp
+** Lsp Keymaps
 @code lua
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
@@ -340,7 +341,11 @@ local on_attach_lsp = function(_, bufnr)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
 end
+  @end
 
+** Lsp Language servers
+*** Servers
+@code lua
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 --
@@ -425,10 +430,16 @@ local servers = {
     },
   },
 }
+    @end
 
+*** Lua configuration setup
+@code lua
 -- Setup neovim lua configuration
 require('neodev').setup()
+@end
 
+*** Rust tools
+@code lua
 -- Setup neovim rust tools.
 require("rust-tools").setup(
   {
@@ -462,11 +473,17 @@ require("rust-tools").setup(
     --   },
     -- },
   })
+@end
 
+** Cmp
+@code lua
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+@end
 
+** Mason
+@code lua
 -- Ensure the servers above are installed
 local mason_lspconfig = require 'mason-lspconfig'
 
