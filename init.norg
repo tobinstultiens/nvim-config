@@ -3,13 +3,13 @@ tangle: ./init.lua
 @end
 
 * Leader
-
 @code lua
 -- Set <space> as the leader key
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 @end
 * Lazy
+** Install
 @code lua
 -- Install package manager
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -24,12 +24,9 @@ if not vim.loop.fs_stat(lazypath) then
   }
 end
 vim.opt.rtp:prepend(lazypath)
-
--- NOTE: Here is where you install your plugins.
---  You can configure plugins using the `config` key.
---
---  You can also configure plugins after the setup call,
---    as they will be available in your neovim runtime.
+@end
+** Packages
+@code lua
 require('lazy').setup({
   -- Git related plugins
   {
@@ -553,6 +550,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'neorg' },
   },
 }
 
