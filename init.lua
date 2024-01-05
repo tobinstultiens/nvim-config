@@ -1,3 +1,54 @@
+-- See `:help vim.keymap.set()`
+vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+
+-- Remap for dealing with word wrap
+vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+
+-- See `:help telescope.builtin`
+vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>/', function()
+  -- You can pass additional configuration to telescope to change theme, layout, etc.
+  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+    winblend = 10,
+    previewer = false,
+  })
+end, { desc = '[/] Fuzzily search in current buffer' })
+
+vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
+vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+
+
+vim.keymap.set('n', "t", ":FloatermToggle myfloat<CR>")
+vim.keymap.set('t', "<Esc>", "<C-\\><C-n>:q<CR>")
+
+vim.keymap.set('n', "<leader>f", "<cmd>Neotree<CR>")
+
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+vim.keymap.set("n", "<leader>gg", require('neogit').open, { desc = "Open neogit"})
+
+vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Open Mason"})
+
+require('which-key').register({
+  ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
+  ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+  ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
+  ['<leader>h'] = { name = 'More git', _ = 'which_key_ignore' },
+  ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+  ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+  ['<leader>f'] = { name = '[F]iles', _ = 'which_key_ignore' },
+})
+
 -- Set <space> as the leader key
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -16,11 +67,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- NOTE: Here is where you install your plugins.
---  You can configure plugins using the `config` key.
---
---  You can also configure plugins after the setup call,
---    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- Git related plugins
   {
@@ -168,11 +214,10 @@ require('lazy').setup({
 }, {})
 
 require("opts")
+require("keys")
 
 -- Set the Theme
 vim.cmd.colorscheme "catppuccin-mocha"
-
-require("keys")
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -328,7 +373,6 @@ local servers = {
   -- clangd = {},
   -- gopls = {},
   -- pyright = {},
-  rust_analyzer = {},
   -- tsserver = {},
   ansiblels = {
     filetypes = {
@@ -404,40 +448,6 @@ local servers = {
 -- Setup neovim lua configuration
 require('neodev').setup()
 
--- Setup neovim rust tools.
-require("rust-tools").setup(
-  {
-    tools = {
-      runnables = {
-        use_telescope = true,
-      },
-      inlay_hints = {
-        auto = true,
-        show_parameter_hints = false,
-        parameter_hints_prefix = "",
-        other_hints_prefix = "",
-      },
-    },
-
-    -- all the opts to send to nvim-lspconfig
-    -- these override the defaults set by rust-tools.nvim
-    -- see https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#rust_analyzer
-    -- server = {
-    --   -- on_attach is a callback called when the language server attachs to the buffer
-    --   on_attach = on_attach_lsp,
-    --   settings = {
-    --     -- to enable rust-analyzer settings visit:
-    --     -- https://github.com/rust-analyzer/rust-analyzer/blob/master/docs/user/generated_config.adoc
-    --     ["rust-analyzer"] = {
-    --       -- enable clippy on save
-    --       checkOnSave = {
-    --         command = "clippy",
-    --       },
-    --     },
-    --   },
-    -- },
-  })
-
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
@@ -458,9 +468,6 @@ mason_lspconfig.setup_handlers {
       filetypes = (servers[server_name] or {}).filetypes,
     }
   end,
-  ["rust_analyzer"] = function()
-    require("rust-tools").setup {}
-  end
 }
 
 -- [[ Configure nvim-cmp ]]
@@ -508,6 +515,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'neorg' },
   },
 }
 

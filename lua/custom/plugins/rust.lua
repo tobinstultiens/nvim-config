@@ -3,10 +3,7 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-	"simrat39/rust-tools.nvim",
-        dependencies = {
-        "neovim/nvim-lspconfig",
-        "nvim-lua/plenary.nvim",
-        "mfussenegger/nvim-dap",
-  },
+  'mrcjkb/rustaceanvim',
+  version = '^3', -- Recommended
+  ft = { 'rust' },
 }
