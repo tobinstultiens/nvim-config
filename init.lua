@@ -416,6 +416,47 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+-- Function to check if an array contains an object with a certain key pair if the array is non-empty
+local function containsObjectWithKey(arr, key)
+  if arr == nil then
+    return false
+  end
+  for _, obj in ipairs(arr) do
+    if obj[key] ~= nil then
+      return true
+    end
+  end
+  return false
+end
+
+-- Set description of object defined for commander using the commander objects
+local function setDescription (item)
+  if item.keys == nil then
+    return
+  end
+  if containsObjectWithKey(item.keys[3], "noremap") and containsObjectWithKey(item.keys[3], "silent") then
+    vim.keymap.set(item.keys[1], item.keys[2], item.cmd, {desc = item.desc, noremap = item.keys[3].noremap, silent = item.keys[3].silent})
+  elseif containsObjectWithKey(item.keys[3], "noremap") then
+    vim.keymap.set(item.keys[1], item.keys[2], item.cmd, {desc = item.desc, noremap = item.keys[3].noremap})
+  elseif containsObjectWithKey(item.keys[3], "silent") then
+    vim.keymap.set(item.keys[1], item.keys[2], item.cmd, {desc = item.desc, silent = item.keys[3].silent})
+  else
+    vim.keymap.set(item.keys[1], item.keys[2], item.cmd, {desc = item.desc})
+  end
+end
+
+-- Implementation of concatenating 2 lists since lua does not have a proper implementation of concatenation.
+local function conList(l1, l2)
+  local combinedList = {}
+  for _, v in ipairs(l1) do
+    table.insert(combinedList, v)
+  end
+  for _, v in ipairs(l2) do
+    table.insert(combinedList, v)
+  end
+  return combinedList
+end
+
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
@@ -424,38 +465,58 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
-vim.keymap.set('n', '<leader>/', function()
-  -- You can pass additional configuration to telescope to change theme, layout, etc.
-  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
-  })
-end, { desc = '[/] Fuzzily search in current buffer' })
+local telescopeKeymap = {
+  {
+    desc = '[?] Find recently opened files',
+    cmd = require('telescope.builtin').oldfiles,
+    keys = {'n','<leader>?' } },
+  {
+    keys = {'n', '<leader><space>'},
+    cmd = require('telescope.builtin').buffers,
+    desc = '[ ] Find existing buffers' },
+  {
+    keys = {'n', '<leader>/'},
+    cmd = function()
+    -- You can pass additional configuration to telescope to change theme, layout, etc.
+    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+      winblend = 10,
+      previewer = false,
+    })
+    end,
+    desc = '[/] Fuzzily search in current buffer' },
 
-vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
-vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+  { keys = {'n', '<leader>gf'}, cmd = require('telescope.builtin').git_files, desc = 'Search [G]it [F]iles' },
+  { keys = {'n', '<leader>sf'}, cmd = require('telescope.builtin').find_files, desc = '[S]earch [F]iles' },
+  { keys = {'n', '<leader>sh'}, cmd = require('telescope.builtin').help_tags, desc = '[S]earch [H]elp' },
+  { keys = {'n', '<leader>sw'}, cmd = require('telescope.builtin').grep_string, desc = '[S]earch current [W]ord' },
+  { keys = {'n', '<leader>sg'}, cmd = require('telescope.builtin').live_grep, desc = '[S]earch by [G]rep' },
+  { keys = {'n', '<leader>sd'}, cmd = require('telescope.builtin').diagnostics, desc = '[S]earch [D]iagnostics' },
+  { keys = {'n', '<leader>sr'}, cmd = require('telescope.builtin').resume, desc = '[S]earch [R]esume' },
+}
 
+local floatingTerminalKeymap = {
+  { keys = {'n', "t"}, cmd = ":FloatermToggle myfloat<CR>"},
+  { keys = {'t', "<Esc>"}, cmd = "<C-\\><C-n>:q<CR>"},
+}
 
-vim.keymap.set('n', "t", ":FloatermToggle myfloat<CR>")
-vim.keymap.set('t', "<Esc>", "<C-\\><C-n>:q<CR>")
+local fileManagerKeymap = {
+  { keys = {'n', "<leader>f"}, cmd = "<cmd>Neotree<CR>", desc = "File tree"}
+}
 
-vim.keymap.set('n', "<leader>f", "<cmd>Neotree<CR>")
+local diagnosticKeymap = {
+  { keys = {'n', '[d'}, cmd = vim.diagnostic.goto_prev, desc = 'Go to previous diagnostic message' },
+  { keys = {'n', ']d'}, cmd = vim.diagnostic.goto_next, desc = 'Go to next diagnostic message' },
+  { keys = {'n', '<leader>e'}, cmd = vim.diagnostic.open_float, desc = 'Open floating diagnostic message' },
+  { keys = {'n', '<leader>q'}, cmd = vim.diagnostic.setloclist, desc = 'Open diagnostics list' },
+}
 
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+local gitKeymap = {
+  { keys = {"n", "<leader>gg"}, cmd = require('neogit').open, desc = "Open neogit"},
+}
 
- vim.keymap.set("n", "<leader>gg", require('neogit').open, { desc = "Open neogit"})
-
-vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Open Mason"})
+local masonKeymap = {
+ { keys = {"n", "<leader>m"}, cmd = "<cmd>Mason<CR>", desc = "Open Mason"},
+}
 
 require('which-key').register({
   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
@@ -467,23 +528,30 @@ require('which-key').register({
   ['<leader>f'] = { name = '[F]iles', _ = 'which_key_ignore' },
 })
 
-require('legendary').setup({
-  extensions = {
-    which_key = {
-      -- Automatically add which-key tables to legendary
-      -- see WHICH_KEY.md for more details
-      auto_register = true,
-      -- controls whether legendary.nvim actually binds they keymaps,
-      -- or if you want to let which-key.nvim handle the bindings.
-      -- if not passed, true by default
-      do_binding = true,
-      -- controls whether to use legendary.nvim item groups
-      -- matching your which-key.nvim groups; if false, all keymaps
-      -- are added at toplevel instead of in a group.
-      use_groups = true,
-    },
-  },
-})
+local neorgKeymap = { 
+  {
+    desc = "Run neorg toc",
+    cmd = "<CMD>Neorg toc<CR>",
+  }, {
+    desc = "Run tangle on current file",
+    cmd = "<CMD>Neorg tangle current-file<CR>"
+  }
+}
+
+vim.keymap.set("n", "<leader>sc", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
+
+local commander = require("commander")
+
+-- Combine all keymaps into one big list
+local commanderKeymapList = conList(conList(conList(conList(conList(conList(telescopeKeymap, neorgKeymap), gitKeymap), floatingTerminalKeymap), fileManagerKeymap), diagnosticKeymap), masonKeymap)
+
+-- Add it to commander
+commander.add(commanderKeymapList)
+
+-- This will convert all added commands to commander to also be descriptive for which-key
+for _, obj in ipairs(commanderKeymapList) do
+  setDescription(obj)
+end
 
 -- See `:help vim.o`
 -- Set highlight on search
