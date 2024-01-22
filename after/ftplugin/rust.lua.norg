@@ -1,0 +1,16 @@
+@document.meta
+tangle: ./after/ftplugin/rust.lua
+@end
+
+* Rust tools
+  @code lua
+  local bufnr = vim.api.nvim_get_current_buf()
+  vim.keymap.set(
+	  "n",
+	  "<leader>ca",
+	  function()
+		  vim.cmd.RustLsp('codeAction'),
+	  end,
+	  { silent = true, buffer = bufnr }
+  )
+  @end
