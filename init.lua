@@ -584,16 +584,15 @@ local neorgKeymap = {
   {
     desc = "Run neorg toc",
     cmd = "<CMD>Neorg toc<CR>",
-    keys = {"n", "<leader>nl"}
   }, {
     desc = "Run tangle on current file",
     cmd = "<CMD>Neorg tangle current-file<CR>",
-    keys = {"n", "<leader>nt"}
-
   }
 }
 
 vim.keymap.set("n", "<leader>sc", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
+vim.keymap.set("i", "<C-p>", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
+vim.keymap.set("n", "<C-p>", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
 
 local commander = require("commander")
 
