@@ -62,6 +62,8 @@ require('lazy').setup({
       -- Adds LSP completion capabilities
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-cmdline',
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
@@ -203,6 +205,22 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- add any options here
+    },
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      "MunifTanjim/nui.nvim",
+      -- OPTIONAL:
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      "rcarriga/nvim-notify",
+    }
+  },
+
   { import = 'custom.plugins' },
 }, {})
 
@@ -246,7 +264,7 @@ require('nvim-treesitter.configs').setup {
     'elixir', 'heex' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-  auto_install = false,
+  auto_install = true,
 
   highlight = { enable = true },
   indent = { enable = true },
@@ -537,6 +555,7 @@ local telescopeKeymap = {
   { keys = {'n', '<leader>sg'}, cmd = require('telescope.builtin').live_grep, desc = '[S]earch by [G]rep' },
   { keys = {'n', '<leader>sd'}, cmd = require('telescope.builtin').diagnostics, desc = '[S]earch [D]iagnostics' },
   { keys = {'n', '<leader>sr'}, cmd = require('telescope.builtin').resume, desc = '[S]earch [R]esume' },
+  { keys = {'n', '<leader>sc'}, cmd = "<CMD>Noice telescope<CR>", desc = '[S]earch [C]ommands' },
 }
 
 local floatingTerminalKeymap = {
@@ -590,7 +609,6 @@ local neorgKeymap = {
   }
 }
 
-vim.keymap.set("n", "<leader>sc", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
 vim.keymap.set("i", "<C-p>", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
 vim.keymap.set("n", "<C-p>", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
 
@@ -673,6 +691,28 @@ local luasnip = require 'luasnip'
 require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
+-- `/` cmdline setup.
+cmp.setup.cmdline('/', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- `:` cmdline setup.
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+      {
+        name = 'cmdline',
+        option = {
+          ignore_cmds = { 'Man', '!' }
+        }
+      }
+    })
+})
 cmp.setup {
   snippet = {
     expand = function(args)
@@ -711,9 +751,30 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'buffer' },
+    { name = 'path' },
     { name = 'neorg' },
   },
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+require("noice").setup({
+  lsp = {
+    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+    override = {
+      ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+      ["vim.lsp.util.stylize_markdown"] = true,
+      ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+    },
+  },
+  -- you can enable a preset for easier configuration
+  presets = {
+    bottom_search = true, -- use a classic bottom cmdline for search
+    command_palette = true, -- position the cmdline and popupmenu together
+    long_message_to_split = true, -- long messages will be sent to a split
+    inc_rename = false, -- enables an input dialog for inc-rename.nvim
+    lsp_doc_border = false, -- add a border to hover docs and signature help
+  },
+})
