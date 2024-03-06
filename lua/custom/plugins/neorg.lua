@@ -10,7 +10,7 @@ return {
           config = {
             folds = true,
             icon_preset = "basic",
-            init_open_folds = "never",
+            -- init_open_folds = "never",
           }
         }, -- Adds pretty icons to your documents
         ["core.syntax"] = {}, -- Adds syntax to code blocks
