@@ -479,35 +479,6 @@ require('neodev').setup()
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
--- Function to check if an array contains an object with a certain key pair if the array is non-empty
-local function containsObjectWithKey(arr, key)
-  if arr == nil then
-    return false
-  end
-  for _, obj in ipairs(arr) do
-    if obj[key] ~= nil then
-      return true
-    end
-  end
-  return false
-end
-
--- Set description of object defined for commander using the commander objects
-local function setDescription (item)
-  if item.keys == nil then
-    return
-  end
-  if containsObjectWithKey(item.keys[3], "noremap") and containsObjectWithKey(item.keys[3], "silent") then
-    vim.keymap.set(item.keys[1], item.keys[2], item.cmd, {desc = item.desc, noremap = item.keys[3].noremap, silent = item.keys[3].silent})
-  elseif containsObjectWithKey(item.keys[3], "noremap") then
-    vim.keymap.set(item.keys[1], item.keys[2], item.cmd, {desc = item.desc, noremap = item.keys[3].noremap})
-  elseif containsObjectWithKey(item.keys[3], "silent") then
-    vim.keymap.set(item.keys[1], item.keys[2], item.cmd, {desc = item.desc, silent = item.keys[3].silent})
-  else
-    vim.keymap.set(item.keys[1], item.keys[2], item.cmd, {desc = item.desc})
-  end
-end
-
 -- Implementation of concatenating 2 lists since lua does not have a proper implementation of concatenation.
 local function conList(l1, l2)
   local combinedList = {}
@@ -619,11 +590,6 @@ local commanderKeymapList = conList(conList(conList(conList(conList(conList(tele
 
 -- Add it to commander
 commander.add(commanderKeymapList)
-
--- This will convert all added commands to commander to also be descriptive for which-key
-for _, obj in ipairs(commanderKeymapList) do
-  setDescription(obj)
-end
 
 -- See `:help vim.o`
 -- Set highlight on search
