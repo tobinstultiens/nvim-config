@@ -42,46 +42,72 @@ require("personal/lsp")
 
 require("personal/keymaps")
 
-  -- See `:help vim.o`
-  -- Set highlight on search
-  -- vim.o.hlsearch = false
+-- See `:help vim.o`
+-- Set highlight on search
+-- vim.o.hlsearch = false
 
-  -- Make line numbers default
-  vim.wo.number = true
+-- Set to true if you have a Nerd Font installed and selected in the terminal
+vim.g.have_nerd_font = false
 
-  -- Set relativenumber on
-  vim.wo.relativenumber = true
+-- Make line numbers default
+vim.opt.number = true
 
-  -- Enable mouse mode
-  vim.o.mouse = 'a'
+-- Set relativenumber on
+vim.opt.relativenumber = true
 
-  -- Sync clipboard between OS and Neovim.
-  --  Remove this option if you want your OS clipboard to remain independent.
-  --  See `:help 'clipboard'`
-  vim.o.clipboard = 'unnamedplus'
+-- Enable mouse mode
+vim.opt.mouse = 'a'
 
-  -- Enable break indent
-  vim.o.breakindent = true
+-- Sync clipboard between OS and Neovim.
+--  Remove this option if you want your OS clipboard to remain independent.
+--  See `:help 'clipboard'`
+vim.opt.clipboard = 'unnamedplus'
 
-  -- Save undo history
-  vim.o.undofile = true
+-- Enable break indent
+vim.opt.breakindent = true
 
-  -- Case-insensitive searching UNLESS \C or capital in search
-  vim.o.ignorecase = true
-  vim.o.smartcase = true
+-- Save undo history
+vim.opt.undofile = true
 
-  -- Keep signcolumn on by default
-  vim.wo.signcolumn = 'yes'
+-- Case-insensitive searching UNLESS \C or capital in search
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
-  -- Decrease update time
-  vim.o.updatetime = 250
-  vim.o.timeoutlen = 300
+-- Keep signcolumn on by default
+vim.opt.signcolumn = 'yes'
 
-  -- Set completeopt to have a better completion experience
-  vim.o.completeopt = 'menuone,noselect'
+-- Decrease update time
+vim.opt.updatetime = 250
+vim.opt.timeoutlen = 300
 
-  -- NOTE: You should make sure your terminal supports this
-  vim.o.termguicolors = true
+-- Set completeopt to have a better completion experience
+vim.opt.completeopt = 'menuone,noselect'
+
+-- NOTE: You should make sure your terminal supports this
+vim.opt.termguicolors = true
+
+-- Don't show the mode, since it's already in the status line
+vim.opt.showmode = false
+
+-- Configure how new splits should be opened
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+
+-- Sets how neovim will display certain whitespace characters in the editor.
+--  See `:help 'list'`
+--  and `:help 'listchars'`
+vim.opt.list = true
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+
+-- Preview substitutions live, as you type!
+vim.opt.inccommand = 'split'
+
+-- Show which line your cursor is on
+vim.opt.cursorline = true
+
+-- Minimal number of screen lines to keep above and below the cursor.
+vim.opt.scrolloff = 10
+
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
