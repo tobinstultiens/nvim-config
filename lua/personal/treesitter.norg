@@ -1,5 +1,5 @@
 @document.meta
-tangle: ./lua/personal/treesitter.lua
+tangle: ./treesitter.lua
 @end
 
 @code lua

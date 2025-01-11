@@ -1,5 +1,5 @@
 @document.meta
-tangle: ./lua/personal/lsp.lua
+tangle: ./lsp.lua
 @end
 
 * Lsp Keymaps

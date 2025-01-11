@@ -156,7 +156,22 @@ require('lazy').setup({
        theme = 'catppuccin',
        component_separators = '|',
        section_separators = '',
-     },
+      },
+      sections = {
+        lualine_b = {
+          {
+          'macro',
+            fmt = function(name, context)
+              local reg = vim.fn.reg_recording()
+              if reg ~= "" then
+                return "Recording @" .. reg
+              end
+              return nil
+            end,
+            draw_empty = false,
+          },
+        }
+      }
    },
  },
 

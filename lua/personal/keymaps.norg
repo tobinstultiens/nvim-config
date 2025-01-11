@@ -1,5 +1,5 @@
 @document.meta
-tangle: ./lua/personal/keymaps.lua
+tangle: ./keymaps.lua
 @end
 
 This contains the helper classes used for building and setting up keymaps.
