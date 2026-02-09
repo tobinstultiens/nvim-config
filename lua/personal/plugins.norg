@@ -2,6 +2,8 @@
 tangle: ./plugins.lua
 @end
 
+This contains the installation script of lazy vim to install itself.
+
 * Install
 @code lua
  -- Install package manager
@@ -18,6 +20,9 @@ tangle: ./plugins.lua
  end
  vim.opt.rtp:prepend(lazypath)
 @end
+
+The packages that are globally installed with lazy.nvim.
+
 * Packages
 @code lua
 require('lazy').setup({
