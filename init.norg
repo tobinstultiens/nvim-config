@@ -1,6 +1,5 @@
 @document.meta
 tangle: ./init.lua
-tangle_on_write: true
 @end
 
 * Leader

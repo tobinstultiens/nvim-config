@@ -27,6 +27,8 @@ return {
               },
             },
           },
+          ['core.tangle'] = { config = { tangle_on_write = true } }, -- Loads default behaviour
+          ['core.integrations.otter'] = {},
         },
       }
     end,

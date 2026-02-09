@@ -220,7 +220,13 @@ require('lazy').setup({
    },
    build = ':TSUpdate',
  },
-
+  {
+    'jmbuhr/otter.nvim',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+    },
+    opts = {},
+    },
  {
    "folke/noice.nvim",
    event = "VeryLazy",
