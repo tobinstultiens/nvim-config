@@ -140,6 +140,9 @@ tangle: ./init.lua
   -- Minimal number of screen lines to keep above and below the cursor.
   vim.opt.scrolloff = 10
 
+  -- Winborder of the floating windows
+  vim.o.winborder = 'rounded'
+
   @end
 * Neovim completion
   @code lua

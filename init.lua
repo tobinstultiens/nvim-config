@@ -108,6 +108,9 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Winborder of the floating windows
+vim.o.winborder = 'rounded'
+
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`

@@ -4,7 +4,7 @@ tangle: ./plugins.lua
 
 This contains the installation script of lazy vim to install itself.
 
-* Install
+* Install lazy
 @code lua
  -- Install package manager
  local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -102,27 +102,6 @@ require('lazy').setup({
          opts.buffer = bufnr
          vim.keymap.set(mode, l, r, opts)
        end
-
-       -- Navigation
-       map({ 'n', 'v' }, ']c', function()
-         if vim.wo.diff then
-           return ']c'
-         end
-         vim.schedule(function()
-           gs.next_hunk()
-         end)
-         return '<Ignore>'
-       end, { expr = true, desc = 'Jump to next hunk' })
-
-       map({ 'n', 'v' }, '[c', function()
-         if vim.wo.diff then
-           return '[c'
-         end
-         vim.schedule(function()
-           gs.prev_hunk()
-         end)
-         return '<Ignore>'
-       end, { expr = true, desc = 'Jump to previous hunk' })
 
        -- Actions
        -- visual mode
