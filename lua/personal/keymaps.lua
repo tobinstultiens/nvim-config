@@ -84,23 +84,28 @@ require('which-key').add{
   },
 }
 
-local neorgKeymap = { 
+local neorgKeymap = {
   {
-    desc = "Run neorg toc",
-    cmd = "<CMD>Neorg toc<CR>",
-  }, {
-    desc = "Run tangle on current file",
-    cmd = "<CMD>Neorg tangle current-file<CR>",
-  }
+    desc = 'Run neorg toc',
+    cmd = '<CMD>Neorg toc<CR>',
+  },
+  {
+    desc = 'Run tangle on current file',
+    cmd = '<CMD>Neorg tangle current-file<CR>',
+  },
+  { keys = { 'n', '<leader>nm' }, cmd = '<Plug>(neorg.looking-glass.magnify-code-block)', desc = 'Magnify code block' },
 }
 
-vim.keymap.set("i", "<C-p>", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
-vim.keymap.set("n", "<C-p>", "<CMD>Telescope commander<CR>", { desc = "[S]earch [C]ommands"})
+vim.keymap.set('i', '<C-p>', '<CMD>Telescope commander<CR>', { desc = '[S]earch [C]ommands' })
+vim.keymap.set('n', '<C-p>', '<CMD>Telescope commander<CR>', { desc = '[S]earch [C]ommands' })
 
-local commander = require("commander")
+local commander = require 'commander'
 
 -- Combine all keymaps into one big list
-local commanderKeymapList = conList(conList(conList(conList(conList(conList(telescopeKeymap, neorgKeymap), gitKeymap), floatingTerminalKeymap), fileManagerKeymap), diagnosticKeymap), masonKeymap)
+local commanderKeymapList = conList(
+  conList(conList(conList(conList(conList(telescopeKeymap, neorgKeymap), gitKeymap), floatingTerminalKeymap), fileManagerKeymap), diagnosticKeymap),
+  masonKeymap
+)
 
 -- Add it to commander
 commander.add(commanderKeymapList)
